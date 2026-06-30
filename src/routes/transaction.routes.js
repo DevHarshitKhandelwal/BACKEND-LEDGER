@@ -19,7 +19,10 @@ transactionRoutes.post("/",authMiddleware.authMiddleware,transactionController.c
 
 transactionRoutes.post("/system/initial-funds",authMiddleware.authSystemUserMiddleware,transactionController.createInitialFundsTransaction)
 
-
-
+/**
+ * -GET /api/transactions/
+ * Get user's transaction history
+ */
+transactionRoutes.get("/",authMiddleware.authMiddleware,transactionController.getUserTransactionsController)
 
 module.exports=transactionRoutes

@@ -28,7 +28,29 @@ res.status(200).json({
 });
 }
 
+async function getUserAccountsController(req, res) {
+    try {
+        const accounts = await accountModel.find({ user: req.user._id });
+        const accountsWithBalance = await Promise.all(accounts.map(async (acc) => {
+            const balance = await acc.getBalance();
+            return {
+                _id: acc._id,
+                user: acc.user,
+                systemUser: acc.systemUser,
+                status: acc.status,
+                currency: acc.currency,
+                balance: balance,
+                createdAt: acc.createdAt
+            };
+        }));
+        res.status(200).json({ accounts: accountsWithBalance });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
 module.exports ={
     createAccountController,
-    getAccountBalanceController
+    getAccountBalanceController,
+    getUserAccountsController
 }

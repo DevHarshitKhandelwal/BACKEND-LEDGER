@@ -255,8 +255,31 @@ async function getUserAccountController(req, res) {
     })
 }
 
+async function getUserTransactionsController(req, res) {
+    try {
+        const accounts = await accountModel.find({ user: req.user._id });
+        const accountIds = accounts.map(acc => acc._id);
+        
+        const transactions = await transactionModel.find({
+            $or: [
+                { fromAccount: { $in: accountIds } },
+                { toAccount: { $in: accountIds } }
+            ]
+        }).sort({ createdAt: -1 });
+
+        res.status(200).json({
+            transactions
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        });
+    }
+}
+
 module.exports = {
     getUserAccountController,
     createInitialFundsTransaction,
-    createTransaction
+    createTransaction,
+    getUserTransactionsController
 }

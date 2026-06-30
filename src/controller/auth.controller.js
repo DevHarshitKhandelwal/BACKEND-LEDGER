@@ -16,7 +16,7 @@ async function userRegisterController(req,res){
     if(isExists){
         return res.status(422).json({
             message:"User already exists with email",
-            statud:"failed"
+            status:"failed"
         })
     }
 
@@ -50,17 +50,17 @@ async function userLoginController(req,res){
 
     const user = await userModel.findOne({email}).select("+password");
     if(!user){
-        return res.statud(401).json({
+        return res.status(401).json({
             message:"Email or password is INVALID"
         })
     }
     const isValidPassword = user.comparePassword(password)
     if(!isValidPassword){
-        return res.statud(401).json({
+        return res.status(401).json({
             message:"Email or password is INVALID"
         })
     }
-
+    
     const token = jwt.sign({userId:user._id},process.env.JWT_SECRET,{
         expiresIn:"3d"
     })
@@ -94,7 +94,7 @@ async function userLogoutController(req,res){
     await tokenBlacklistModel.create({
         token:token
     })
-    res.clearCokkie("token")
+    res.clearCookie("token")
 
     res.status(200).json({
         message:"user logged out successfully"
